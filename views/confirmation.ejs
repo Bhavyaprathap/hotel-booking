@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ffccf9, #bde0fe);
+
+            margin: 0;
+            padding: 0;
+        }
+
+        .confirmation-container {
+            justify-content: center;
+            background-color: #fff;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            margin-bottom: 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0,0.1);
+        }
+
+        .confirmation-container h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 30px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .confirmation-details {
+            margin: 20px 0;
+        }
+
+        .confirmation-details h2 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .confirmation-details p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .details-item {
+            font-weight: bold;
+        }
+
+        .total-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            background-color: #6e6456;
+            color: white;
+            text-align: center;
+            margin: 30px auto 0;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background-color: #51473b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="confirmation-container">
+        <h1>Booking Confirmation</h1>
+
+        <div class="confirmation-details">
+            <h2>Your Booking Details</h2>
+            <p><span class="details-item">Hostel:</span> <%= roombooking.hostel %></p>
+            <p><span class="details-item">Check-in Date:</span> <%= new Date(roombooking.checkinDate).toLocaleDateString() %></p>
+            <p><span class="details-item">Check-out Date:</span> <%= new Date(roombooking.checkoutDate).toLocaleDateString() %></p>
+            <p><span class="details-item">Number of Guests:</span> <%= roombooking.guests %></p>
+        </div>
+
+        <div class="total-price">
+            <p>Total Price: ₹<%= roombooking.price %></p>
+        </div>
+
+        <a href="/dashboard" class="back-btn">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>
