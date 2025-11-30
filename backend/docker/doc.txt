@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sampledb
+
+
+build: docker-compose build
+run: docker-compose up -d
+stop: docker-compose down
+list: docker-compose ps

@@ -1,0 +1,382 @@
+
+
+📌 1. SRS Document — Hospital Management System (HMS)
+1. Abstract
+
+The Hospital Management System (HMS) is a software solution designed to digitalize and automate all major day-to-day operations of a hospital. This includes patient registration, appointment scheduling, doctor consultation, electronic medical records, billing, pharmacy management, laboratory integration, and inpatient services. The system aims to reduce manual workload, minimize human errors, increase efficiency, and provide secure access to patient health information. HMS improves communication between departments and enables seamless coordination among doctors, nurses, pharmacists, and administrative staff.
+
+2. Functional Requirements (FR)
+FR1: Patient Registration
+
+Register new patients with personal, medical, and contact details.
+
+Assign unique Patient ID.
+
+FR2: Appointment Management
+
+Book, modify, or cancel doctor appointments.
+
+Auto-allocate slots based on doctor availability.
+
+FR3: Electronic Medical Records (EMR)
+
+Maintain each patient’s past medical history.
+
+Store prescriptions, diagnoses, test results.
+
+FR4: Doctor Module
+
+Doctors can view appointments, update prescriptions, and access medical history.
+
+FR5: Billing & Payments
+
+Auto-generate bills for consultation, tests, pharmacy, and admission.
+
+Support UPI, card, cash.
+
+FR6: Pharmacy Module
+
+Manage medicine inventory.
+
+Check drug availability and expiry dates.
+
+FR7: Laboratory Management
+
+Manage lab test requests.
+
+Upload and store lab results.
+
+FR8: Inpatient Management
+
+Bed allotment, nurse assignment, treatment tracking.
+
+FR9: Admin Module
+
+Access control, staff creation, department management.
+
+3. Non-Functional Requirements (NFR)
+NFR1: Security
+
+Patient records must be encrypted.
+
+Role-based access (Doctor, Nurse, Admin).
+
+NFR2: Reliability
+
+Backup every 24 hours.
+
+99.9% uptime.
+
+NFR3: Performance
+
+System should load patient data within 3 seconds.
+
+NFR4: Scalability
+
+Support multi-branch hospitals in the future.
+
+NFR5: Usability
+
+User-friendly UI for medical staff with minimal training.
+
+NFR6: Availability
+
+System must run 24x7, even during emergencies.
+
+4. User Identification
+User Type	Description
+Patient	Seeks consultation, tests, reports
+Doctor	Provides diagnosis & updates records
+Nurse	Updates patient vitals
+Lab Technician	Manages lab tests
+Pharmacist	Issues medicines
+Admin	Manages hospital operations
+5. Workflow of Each User
+Patient Workflow
+
+Register
+
+Book appointment
+
+Meet doctor
+
+Take tests
+
+Collect reports
+
+Billing and payment
+
+Doctor Workflow
+
+View schedule
+
+Check patient EMR
+
+Diagnose
+
+Prescribe medicines/tests
+
+Update records
+
+Nurse Workflow
+
+View admitted patient list
+
+Update vitals
+
+Assist doctor
+
+Pharmacist Workflow
+
+Check prescriptions
+
+Issue medicines
+
+6. Use Cases
+Use Case 1: Book Appointment
+
+Actor: Patient
+
+Flow: Select doctor → Select time → Confirm
+
+Use Case 2: Update Prescription
+
+Actor: Doctor
+
+Use Case 3: Generate Bill
+
+Actor: Billing Staff
+
+
+
+
+
+
+📌 2. SRS Document — Banking Management System
+1. Abstract
+
+The Banking Management System is designed to automate and secure core banking services like account creation, fund transfers, transaction history, loan management, and customer support. It ensures secure communication, real-time processing of transactions, and accurate financial records. The system reduces manual paper-based processes and enhances customer satisfaction through instant digital services.
+
+2. Functional Requirements (FR)
+FR1: User Authentication
+
+Login via username/password and OTP.
+
+FR2: Account Management
+
+Create, update, or delete bank accounts.
+
+View account balance.
+
+FR3: Fund Transfer
+
+IMPS, NEFT, RTGS within or outside the bank.
+
+FR4: Transaction History
+
+Display list of past transactions.
+
+FR5: Loan Management
+
+Apply for loans.
+
+Admin approves or rejects.
+
+FR6: Bill and Utility Payments
+
+Electricity, water, phone bills.
+
+FR7: Customer Support
+
+Inquiry and complaint system.
+
+FR8: Admin Module
+
+Manage employee accounts.
+
+Monitor transactions.
+
+3. Non-Functional Requirements (NFR)
+NFR1: Security
+
+AES-256 encryption
+
+Two-factor authentication
+
+Anti-fraud monitoring
+
+NFR2: Performance
+
+Fund transfers must be processed in <5 seconds.
+
+NFR3: Availability
+
+99.99% uptime.
+
+NFR4: Reliability
+
+All transactions stored with audit trail.
+
+NFR5: Backup
+
+Automatic backup multiple times per day.
+
+4. User Identification
+User Type	Role
+Customer	Uses banking services
+Bank Employee	Creates and manages accounts
+Bank Manager	Reviews high-value approvals
+Auditor	Ensures compliance
+5. Workflow of Each User
+Customer Workflow
+
+Login
+
+Check balance
+
+Transfer money
+
+Pay bills
+
+Logout
+
+Bank Employee Workflow
+
+Login
+
+Approve account creation
+
+Assist customers
+
+Manager Workflow
+
+Approve major loans
+
+View financial reports
+
+6. Use Cases
+Use Case 1: Transfer Funds
+
+Actor: Customer
+
+Steps: Enter details → OTP verification → Transfer successful
+
+Use Case 2: Approve Loan
+
+Actor: Manager
+
+
+
+
+
+
+
+
+
+📌 3. SRS Document — College Management System
+1. Abstract
+
+The College Management System streamlines academic and administrative operations such as student registration, faculty allocation, attendance tracking, course management, examinations, grading, and fee payment. It eliminates paperwork, improves transparency, and enhances coordination across multiple departments.
+
+2. Functional Requirements (FR)
+FR1: Student Admission
+
+Register new students with personal details and documents.
+
+FR2: Faculty Management
+
+Add/update faculty information.
+
+Assign faculty to subjects.
+
+FR3: Course Management
+
+Add or edit courses and departments.
+
+FR4: Attendance Management
+
+Faculty can mark attendance.
+
+Students can view attendance.
+
+FR5: Examination Management
+
+Create exam schedules.
+
+Publish results.
+
+FR6: Fee Payment Module
+
+Students can pay fees online.
+
+FR7: Library Management (Optional)
+
+Issue and return books.
+
+FR8: Admin Module
+
+Manage users, departments, timetables.
+
+3. Non-Functional Requirements (NFR)
+Security
+
+Role-based access for students, faculty, admin.
+
+Performance
+
+System must handle peak loads during admissions.
+
+Usability
+
+Easy for students and faculty to use.
+
+Availability
+
+24/7 online availability.
+
+Backup
+
+Secure database backup daily.
+
+4. User Identification
+User Type	Role
+Student	Views attendance, marks, fees
+Faculty	Marks attendance, uploads marks
+Admin	Full control of system
+5. Workflow of Each User
+Student
+
+Login
+
+View attendance
+
+View exam results
+
+Pay fees
+
+Faculty
+
+Login
+
+Mark attendance
+
+Upload marks
+
+Admin
+
+Add students
+
+Add faculty
+
+Manage courses
+
+6. Use Cases
+Use Case 1: Mark Attendance
+
+Actor: Faculty
+
+Steps: Select class → Mark → Save
+
+Use Case 2: View Results
+
+Actor: Student

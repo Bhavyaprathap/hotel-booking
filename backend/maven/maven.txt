@@ -1,0 +1,329 @@
+Complete Guide: Eclipse → Build WAR/JAR → Environment Setup → Git Push → Dockerfile → Docker Compose
+
+1. Install Eclipse
+
+-   Download Eclipse IDE for Enterprise Java Developers
+-   Install and launch Eclipse
+-   Select a workspace directory
+
+2. Import Maven Project Using Provided pom.xml
+
+-   Open Eclipse → File → Import
+-   Choose “Existing Maven Project”
+-   Browse to project folder
+-   Eclipse loads dependencies automatically
+
+3. Edit pom.xml (If Required)
+
+-   Open pom.xml
+-   Modify version, artifactId, dependencies as instructed
+-   Save file
+-   Right‑click project → Maven → Update Project
+
+4. Clean & Build Project
+
+-   Right‑click project → Run As → Maven clean
+-   Right‑click project → Run As → Maven install
+-   Build success message appears
+-   Generated files:
+    -   target/*.jar (Spring Boot apps)
+    -   target/*.war (Web apps)
+
+5. Run the Application Locally
+
+-   For JAR:
+    java -jar target/yourfile.jar
+-   For WAR:
+    Deploy war to Tomcat → Start server
+
+6. Set Environment Variables
+
+Windows
+
+-   Search “Environment Variables”
+-   Add new variable:
+    NAME = API_KEY
+    VALUE = xxxx
+
+Mac/Linux
+
+-   Edit ~/.zshrc or ~/.bashrc
+-   Add:
+    export API_KEY=xxxx
+-   Run source ~/.zshrc
+
+7. Initialize Git Repository
+
+    git init
+    git add .
+    git commit -m "Initial commit"
+
+8. Connect to GitHub
+
+    git remote add origin https://github.com/yourname/repo.git
+    git push -u origin main
+
+9. Create Dockerfile
+
+    FROM openjdk:17
+    WORKDIR /app
+    COPY target/*.jar app.jar
+    EXPOSE 8080
+    ENTRYPOINT ["java", "-jar", "app.jar"]
+
+10. Build & Run Docker Image
+
+    docker build -t myapp .
+    docker run -p 8080:8080 myapp
+
+11. Create docker-compose.yml
+
+    version: "3.8"
+    services:
+      myapp:
+        build: .
+        ports:
+          - "8080:8080"
+        environment:
+          - API_KEY=${API_KEY}
+
+12. Run Compose
+
+    docker compose up --build
+
+13. Stop & Clean Containers
+
+    docker compose down
+
+END OF FILE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Eclipse → Maven Project → Edit POM → Build WAR → Run → Git Push
+================================================================
+
+This file provides detailed, step-by-step instructions (beginner-friendly) to work with a Maven web project in Eclipse,
+starting from project setup, editing a provided pom.xml, building a WAR, running locally (Tomcat), and pushing the project
+to GitHub. Follow each step in order.
+
+Prerequisites
+-------------
+1. Java JDK installed (e.g., OpenJDK 11 or 17). Ensure `java -version` works.
+2. Eclipse IDE for Enterprise Java and Web Developers (includes Maven support).
+3. Apache Maven installed (optional—Eclipse has an embedded Maven, but having Maven CLI helps).
+4. Git installed (`git --version`).
+5. GitHub account and a repository created (or plan to create one).
+6. Apache Tomcat (optional) for local deployment — Tomcat 9+ recommended.
+
+Part A — Create or Import Project in Eclipse
+--------------------------------------------
+
+Option 1: If you are given a ZIP or folder with a Maven project (contains pom.xml)
+1. Open Eclipse.
+2. File → Import...
+3. Choose "Existing Maven Projects" (under Maven) → Next.
+4. Browse... → select the folder that contains the pom.xml → Finish.
+5. Eclipse will import the project and resolve Maven dependencies automatically.
+
+Option 2: If you need to create a new Maven web project in Eclipse
+1. File → New → Other... → Maven → Maven Project → Next.
+2. Choose Workspace Location (use default) → Next.
+3. Select an Archetype: choose "maven-archetype-webapp" or "maven-archetype-quickstart" depending on needs.
+   - For a web application choose `maven-archetype-webapp`.
+4. Group Id: com.example
+   Artifact Id: mywebapp
+   Version: 1.0-SNAPSHOT
+   Package: com.example
+   → Finish.
+5. Eclipse will create the standard Maven webapp layout:
+   - src/main/java
+   - src/main/resources
+   - src/main/webapp (WEB-INF, web.xml if present)
+   - pom.xml
+
+Part B — Edit the provided pom.xml
+----------------------------------
+If your instructor has given you a pom.xml, copy that file into the project root or replace the existing pom.xml.
+
+Common things to check/edit in pom.xml:
+1. Project coordinates: `groupId`, `artifactId`, `version`.
+2. Packaging: for a web application, ensure:
+   <packaging>war</packaging>
+3. Java version in properties:
+   <properties>
+     <maven.compiler.source>11</maven.compiler.source>
+     <maven.compiler.target>11</maven.compiler.target>
+   </properties>
+4. Dependencies: add web frameworks (e.g., Servlet API, JSP, Spring) as needed. Example minimal dependencies:
+   <dependency>
+     <groupId>javax.servlet</groupId>
+     <artifactId>javax.servlet-api</artifactId>
+     <version>4.0.1</version>
+     <scope>provided</scope>
+   </dependency>
+5. Build plugin for WAR (usually not necessary, Maven handles war packaging automatically):
+   <build>
+     <plugins>
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-war-plugin</artifactId>
+         <version>3.3.2</version>
+       </plugin>
+     </plugins>
+   </build>
+
+After editing pom.xml:
+1. Save the file.
+2. Right-click the project → Maven → Update Project... → check "Force Update of Snapshots/Releases" → OK.
+3. Check Problems view in Eclipse for build issues and resolve dependency errors.
+
+Part C — Build the project and create WAR
+-----------------------------------------
+Option A: Using Eclipse (Maven integration)
+1. Right-click project → Run As → Maven clean
+2. Right-click project → Run As → Maven install
+   - `mvn clean install` runs tests and creates the artifact.
+3. The generated WAR will be in `target/` folder, e.g., `target/mywebapp-1.0-SNAPSHOT.war`.
+
+Option B: Using terminal/command line (recommended for clarity)
+1. Open terminal at the project root (where pom.xml exists).
+2. Run:
+   mvn clean package
+3. After success, check `target/` directory for the WAR.
+
+Notes:
+- If tests fail and you want to skip tests (not recommended for exams), use:
+  mvn clean package -DskipTests
+
+Part D — Run the WAR locally (Tomcat)
+-------------------------------------
+Option 1: Deploy to a local Tomcat server (manual)
+1. Install Apache Tomcat and start it (or use the Tomcat manager webapp).
+2. Copy the WAR file from `target/` to Tomcat's `webapps/` folder.
+3. Start Tomcat (`bin/startup.sh` or `bin/startup.bat`) or restart if already running.
+4. Open in browser: `http://localhost:8080/<context-path>/`
+   - Context path is usually `artifactId-version` unless you rename the WAR file or configure Tomcat context.
+
+Option 2: Run from Eclipse (Tomcat integration)
+1. Window → Show View → Servers (if not visible).
+2. Right-click → New → Server → Choose Apache Tomcat v9.0 (or version installed).
+3. Point to your Tomcat installation directory when prompted.
+4. Add your web project to the server (right-click server → Add and Remove... → add your project).
+5. Start the server in Eclipse (right-click server → Start).
+6. Visit `http://localhost:8080/<project-name>/`.
+
+Option 3: Use Embedded server via plugins (Spring Boot has embedded Tomcat)
+- If it's a Spring Boot project, run the main application as Java Application or:
+  mvn spring-boot:run
+
+Part E — Verify application
+---------------------------
+1. Open browser and visit the expected URL.
+2. Interact with the app to ensure pages load, forms submit, etc.
+3. Check server logs (Tomcat logs or Eclipse Console) for runtime errors.
+
+Part F — Initialize Git and push to GitHub (Command Line)
+----------------------------------------------------------
+Assuming you already have a GitHub repository created.
+
+1. Configure Git (if not already):
+   git config --global user.name "Your Name"
+   git config --global user.email "you@example.com"
+
+2. Initialize repository (if project is not already a git repo):
+   cd /path/to/project
+   git init
+
+3. Create a `.gitignore` file to exclude target, local IDE files:
+   # .gitignore (example)
+   target/
+   .classpath
+   .project
+   .settings/
+   .idea/
+   *.log
+   *.class
+
+   Save as `.gitignore` in project root.
+
+4. Stage and commit:
+   git add .
+   git commit -m "Initial commit - Maven webapp"
+
+5. Add remote origin (GitHub)
+   git remote add origin https://github.com/<your-username>/<your-repo>.git
+
+6. Push to GitHub (main branch)
+   git branch -M main
+   git push -u origin main
+
+If you face authentication issues:
+- Use GitHub CLI `gh auth login` or
+- Create a Personal Access Token (PAT) in GitHub and use it as password when prompted, or
+- Use SSH keys: generate `ssh-keygen`, add public key to GitHub, then use `git@github.com:...` remote URL.
+
+Part G — Using Git inside Eclipse (Eclipse EGit)
+------------------------------------------------
+1. Right-click project → Team → Share Project...
+2. Choose Git → Next.
+3. Create a new repository in the workspace or select an existing one → Finish.
+4. Commit: Right-click project → Team → Commit...
+   - Add commit message and select files to commit → Commit and Push...
+5. Configure remote:
+   - In the Push dialog, add remote URI (https://github.com/username/repo.git) and credentials.
+6. Push to remote.
+
+Part H — Common Troubleshooting
+-------------------------------
+1. Dependency resolution errors:
+   - Right-click project → Maven → Update Project.
+   - Check ~/.m2/settings.xml for proxy settings if behind company proxy.
+
+2. Permission denied on push:
+   - Use HTTPS with PAT or SSH with keys.
+
+3. Tomcat context errors (HTTP 404):
+   - Check `web.xml` and ensure `index.jsp` or proper servlet mapping exists.
+   - View Tomcat logs (catalina.out) for stack traces.
+
+4. WAR not deploying:
+   - Ensure packaging is `war` in pom.xml.
+   - Check `target/` contains the WAR file.
+
+5. Tests failing during `mvn install`:
+   - Fix tests or run `mvn -DskipTests package` to skip temporarily.
+
+Appendix — Useful Commands
+--------------------------
+# Maven
+mvn clean
+mvn package
+mvn install
+mvn spring-boot:run
+
+# Git
+git init
+git add .
+git commit -m "msg"
+git remote add origin <url>
+git push -u origin main
+
+# Tomcat (Linux/macOS)
+cd /path/to/tomcat/bin
+./startup.sh
+./shutdown.sh
+
+End of File.
