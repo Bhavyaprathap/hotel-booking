@@ -1,0 +1,342 @@
+
+WEEK 1 – EC2 (LINUX & WINDOWS CONNECTION)
+
+
+STEP 1:
+Go to AWS Console → EC2 → Launch Instance
+
+Select:
+AMI: Ubuntu / Windows
+Instance type: t2.micro
+Create Key Pair → download .pem
+Security Group:
+   Allow SSH (22) – My IP
+   Allow RDP (3389) – My IP (for Windows)
+
+Click Launch Instance
+
+
+Connect Linux EC2 using PuTTY
+------------------------------------------------------------
+
+Install:
+PuTTY
+PuTTYgen
+
+Convert .pem to .ppk:
+Open PuTTYgen
+Load → select .pem
+Save private key → keyname.ppk
+
+Open PuTTY:
+Host Name:
+ubuntu@<Public-IP>
+
+Connection → SSH → Auth → Credentials
+Browse → Select .ppk
+
+Click Open → Yes
+
+Verify:
+whoami
+Output: ubuntu
+
+------------------------------------------------------------
+Connect using AWS CloudShell
+------------------------------------------------------------
+
+Open CloudShell
+EC2 → Connect → SSH Client
+Copy ssh -i command
+
+Upload .pem into CloudShell
+Paste ssh command
+Connected
+
+------------------------------------------------------------
+Connect Windows EC2 using RDP
+------------------------------------------------------------
+
+EC2 → Instance → Connect → RDP Client
+Click Get Password
+Upload .pem
+Decrypt password
+Copy password
+
+Open Remote Desktop (mstsc)
+Computer: <Public-IP>
+Username: Administrator
+Password: Decrypted password
+
+Connected
+
+============================================================
+WEEK 2 – EBS (CREATE, ATTACH, SNAPSHOT)
+============================================================
+
+STEP 1: Create EBS Volume
+EC2 → Volumes → Create Volume
+Type: gp3
+Size: 20GB
+Availability Zone: Same as EC2
+Create
+
+STEP 2: Attach Volume
+Select Volume → Actions → Attach
+Select Instance
+Device: /dev/xvdf
+Attach
+
+STEP 3: Verify in EC2
+SSH into EC2
+Run:
+lsblk
+
+------------------------------------------------------------
+Permanent Mount
+------------------------------------------------------------
+
+Create Partition:
+fdisk /dev/nvme1n1
+n → p → Enter → Enter → Enter → w
+
+partprobe
+
+Format:
+mkfs.xfs /dev/nvme1n1p1
+
+Create Directory:
+mkdir /mnt/data
+
+Mount:
+mount /dev/nvme1n1p1 /mnt/data
+
+Make Permanent:
+blkid /dev/nvme1n1p1
+Copy UUID
+
+nano /etc/fstab
+
+Add:
+UUID=<UUID> /mnt/data xfs defaults,nofail 0 0
+
+mount -a
+
+Reboot:
+reboot
+Check:
+df -h
+
+------------------------------------------------------------
+Snapshot & Cross Region
+------------------------------------------------------------
+
+Create Snapshot:
+Volumes → Select → Actions → Create Snapshot
+
+Copy Snapshot:
+Snapshots → Copy Snapshot
+Select destination region
+
+Switch Region
+Create Volume from Snapshot
+Attach to EC2
+
+============================================================
+WEEK 3 – EFS (SHARED STORAGE)
+============================================================
+
+STEP 1: Launch Two EC2
+Name: EFS-1
+Name: EFS-2
+Security Group:
+Allow NFS (2049)
+
+STEP 2: Create EFS
+Go to EFS → Create File System
+Select VPC
+Attach NFS Security Group
+
+STEP 3: Connect to EC2
+ssh -i key.pem ec2-user@<Public-IP>
+
+sudo su
+mkdir efs
+yum install -y amazon-efs-utils
+
+STEP 4: Mount EFS
+EFS → Attach
+Copy mount via DNS command
+
+Paste in both EC2
+
+STEP 5: Test
+cd efs
+touch file1
+
+Check in other EC2
+File visible
+
+============================================================
+WEEK 4 – S3 (BUCKET, VERSIONING, WEBSITE)
+============================================================
+
+STEP 1: Create Bucket
+S3 → Create Bucket
+Name: my-public-bucket-123
+Uncheck:
+Block All Public Access
+Create
+
+STEP 2: Enable Bucket ACL
+Permissions → ACL
+Everyone → Read
+
+STEP 3: Upload Object
+Objects → Upload → Add file
+
+STEP 4: Enable Object ACL
+Object → Permissions → ACL
+Everyone → Read
+
+Copy Object URL
+Open in browser
+
+------------------------------------------------------------
+Enable Versioning
+------------------------------------------------------------
+
+Bucket → Properties
+Enable Versioning
+
+Upload same file again
+New version created
+
+Delete file
+Delete marker created
+
+------------------------------------------------------------
+Cross Region Replication
+------------------------------------------------------------
+
+Enable versioning on both buckets
+
+Create destination bucket (different region)
+
+Source Bucket → Management → Replication Rule
+Select destination bucket
+Use AWS managed role
+Save
+
+Upload new file
+Check destination bucket
+
+------------------------------------------------------------
+Static Website Hosting
+------------------------------------------------------------
+
+Upload:
+index.html
+error.html
+
+Bucket → Properties → Static Website Hosting
+Enable
+Index: index.html
+Error: error.html
+
+Enable ACL (Bucket + Object)
+
+Copy Website Endpoint
+Open in browser
+
+============================================================
+WEEK 5 – VPC (CUSTOM VPC SETUP)
+============================================================
+
+STEP 1: Create VPC
+CIDR: 10.0.0.0/16
+
+STEP 2: Create Subnets
+Public: 10.0.1.0/24
+Private: 10.0.2.0/24
+
+STEP 3: Create Internet Gateway
+Attach to VPC
+
+STEP 4: Route Tables
+
+Public Route:
+0.0.0.0/0 → IGW
+
+Associate with Public Subnet
+
+Private Route:
+Only local route
+Associate with Private Subnet
+
+STEP 5: Enable Auto Assign Public IP
+Public Subnet → Edit → Enable
+
+STEP 6: Security Group
+Allow:
+SSH (22)
+HTTP (80)
+HTTPS (443)
+
+STEP 7: Launch EC2
+Public EC2 → Public Subnet
+Private EC2 → Private Subnet
+
+Test:
+Public EC2 → Internet OK
+Private EC2 → No direct inbound
+
+============================================================
+WEEK 6 – VPC WITH BASTION & NAT GATEWAY
+============================================================
+
+VPC CIDR: 10.0.0.0/16
+Public Subnet: 10.0.1.0/24
+Private Subnet: 10.0.2.0/24
+
+------------------------------------------------------------
+Bastion Setup
+------------------------------------------------------------
+
+Bastion Security Group:
+Allow SSH from My IP
+
+DB Security Group:
+Allow SSH from Bastion Private IP
+Allow MySQL (3306) from 10.0.1.0/24
+
+Launch:
+Bastion → Public Subnet
+DB Server → Private Subnet
+
+Copy DB Key:
+scp -i bastion.pem dbserver.pem ubuntu@<Bastion-IP>:/home/ubuntu/
+
+SSH to Bastion:
+ssh -i bastion.pem ubuntu@<Bastion-IP>
+
+SSH to DB:
+ssh -i dbserver.pem ubuntu@10.0.2.x
+
+------------------------------------------------------------
+NAT Gateway Setup
+------------------------------------------------------------
+
+Create NAT Gateway (Public Subnet)
+Allocate Elastic IP
+
+Create Route Table
+Add Route:
+0.0.0.0/0 → NAT Gateway
+
+Associate with Private Subnet
+
+Now:
+Private EC2 → Internet access available
+apt update / yum install works
+
